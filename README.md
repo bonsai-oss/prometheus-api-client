@@ -1,18 +1,10 @@
 # prometheus api client
 
+A simple prometheus api client.
+
+## Features
+- [x] Query
+- [x] QueryRange
+
 ## Usage
-```go
-package main
-
-import (
-	"fmt"
-
-	Prometheus "github.com/bonsai-oss/prometheus-api-client"
-)
-
-func main() {
-	client := Prometheus.Client{Endpoint: "http://localhost:9090"}
-	data := client.Query("up").Result()
-	fmt.Printf("%+v", data)
-}
-```
+See [example_test.go](example_test.go) for usage examples.
