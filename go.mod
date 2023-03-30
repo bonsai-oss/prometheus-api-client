@@ -1,3 +1,3 @@
 module github.com/bonsai-oss/prometheus-api-client
 
-go 1.15
+go 1.18
