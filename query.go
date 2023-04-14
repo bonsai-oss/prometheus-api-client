@@ -58,6 +58,10 @@ func (c Client) Query(query Query) (*QueryResponse, error) {
 	if requestCreateError != nil {
 		return nil, requestCreateError
 	}
+	// add custom headers
+	for key, value := range c.headers {
+		request.Header.Set(key, value)
+	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	res, responseError := http.DefaultClient.Do(request)
