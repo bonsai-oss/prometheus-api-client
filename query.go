@@ -2,6 +2,7 @@ package prometheus
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -67,6 +68,11 @@ func (c Client) Query(query Query) (*QueryResponse, error) {
 	res, responseError := http.DefaultClient.Do(request)
 	if responseError != nil {
 		return nil, responseError
+	}
+
+	if res.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(res.Body)
+		return nil, ErrInvalidResponse{StatusCode: res.StatusCode, Message: string(body)}
 	}
 
 	var obj QueryResponse
