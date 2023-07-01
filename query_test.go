@@ -79,11 +79,20 @@ func TestQueryResponseTypes(t *testing.T) {
 		{expectSuccess: true, query: RangeQuery{QueryExpression: "up", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}, expectedType: "matrix"},
 		{expectSuccess: true, query: RangeQuery{QueryExpression: "sum(up)", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}, expectedType: "matrix"},
 		{expectSuccess: true, query: RangeQuery{QueryExpression: "up{job=\"prometheus\"}", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}, expectedType: "matrix"},
-		{expectSuccess: false, query: RangeQuery{QueryExpression: "up{job=\"prometheus\"}[5m]", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}, expectedType: "matrix"},
+		{expectSuccess: false, query: RangeQuery{QueryExpression: "up{job=\"prometheus\"}[5m]", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}},
 		{expectSuccess: true, query: RangeQuery{QueryExpression: "rate(up[5m])", Start: time.Now().Add(-1 * time.Hour), End: time.Now(), Step: 20 * time.Minute}, expectedType: "matrix"},
 	} {
 		t.Run("", func(t *testing.T) {
-			response, _ := client.Query(testCase.query)
+			response, err := client.Query(testCase.query)
+			if err != nil && testCase.expectSuccess {
+				t.Log(testCase.query)
+				t.Fatal(err)
+			}
+
+			if !testCase.expectSuccess && response == nil {
+				t.Log(err)
+				return
+			}
 
 			if testCase.expectSuccess && response.Status != "success" {
 				t.Errorf("Expected success, got %s", response.Status)
